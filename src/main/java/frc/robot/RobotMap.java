@@ -19,12 +19,7 @@ public class RobotMap
   //Left Motor Ports
   private final int LEFT_MOTOR_PORT_ONE = 1;
 
-  //Shifter Solenoid Ports
-  private final int SHIFT_PORT_ON = 0;
-  private final int SHIFT_PORT_OFF = 1;
-
   //Optical Encoder Ports
-
   private final int LEFT_ENC_PORT_A = 0;
   private final int LEFT_ENC_PORT_B = 1; 
   private final int RIGHT_ENC_PORT_A = 2;
