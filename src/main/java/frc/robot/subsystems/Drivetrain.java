@@ -35,8 +35,9 @@ public class Drivetrain extends Subsystem
   //DIFFERENTIAL DRIVE
   private final DifferentialDrive DIFF_DRIVE;
 
-  //SHIFTING SOLENOIDS
-  private final DoubleSolenoid SHIFT_SOL;
+  //VARIABLE RPM ELECTRO-SHIFT
+  private int shiftStatus;
+  private double rPMCoefficient;
 
   //NAVX MXP GYRO
   private final AHRS GYRO;
@@ -62,37 +63,48 @@ public class Drivetrain extends Subsystem
     //DIFFERENTIAL DRIVE
     this.DIFF_DRIVE = new DifferentialDrive(this.LEFT_M_GROUP, this.RIGHT_M_GROUP);
 
-    //SHIFTING SOLENOIDS
-    this.SHIFT_SOL = new DoubleSolenoid(Robot.ROBOTMAP.getShiftPortOn(), Robot.ROBOTMAP.getShiftPortOff());
-
     //NAVX MXP GYRO
     this.GYRO = new AHRS(SPI.Port.kMXP);
     this.KP_GYRO = Robot.ROBOTMAP.getKPGyro();
 
+    //VARIABLE RPM ELECTRO-SHIFT
+    this.shiftStatus = 1;
+    this.rPMCoefficient = 1.75;
+
     //GRAYHILL OPTICAL ENCODERS
     this.leftEnc = new Encoder(Robot.ROBOTMAP.getLeftEncPortA(), Robot.ROBOTMAP.getLeftEncPortB(), false, EncodingType.k4X);
     this.rightEnc = new Encoder(Robot.ROBOTMAP.getRightEncPortA(), Robot.ROBOTMAP.getRightEncPortB(), false, EncodingType.k4X);
-
-    //SET ROBOT TO LOW GEAR
-    SHIFT_SOL.set(DoubleSolenoid.Value.kReverse);
   }
 
   @Override
-  public void initDefaultCommand() {
+  public void initDefaultCommand() 
+  {
     setDefaultCommand(new DiffDrive());
   }
 
   //DRIVING METHOD
-  public void arcadeDrive(Joystick stick) {
+  public void arcadeDrive(Joystick stick) 
+  {
     this.DIFF_DRIVE.arcadeDrive(stick.getY(), -stick.getTwist());
   }
 
-  //SHIFTING METHOD -- if { LOW } else { HIGH }
-  public void shiftGear() {
-    if(SHIFT_SOL.get() == DoubleSolenoid.Value.kForward) {
-      this.SHIFT_SOL.set(DoubleSolenoid.Value.kReverse);
-    } else {
-      this.SHIFT_SOL.set(DoubleSolenoid.Value.kForward);
+  //SHIFTING METHOD
+  public void shiftGear() 
+  {
+    if (this.shiftStatus == 1) 
+    {
+      this.shiftStatus = 2;
+      this.rPMCoefficient = 1.5;
+    } 
+    else if (this.shiftStatus == 2)
+    {
+      this.shiftStatus = 3;
+      this.rPMCoefficient = 1;
+    }
+    else if (this.shiftStatus == 3)
+    {
+      this.shiftStatus = 1;
+      this.rPMCoefficient = 1.75;
     }
   }
 
@@ -127,19 +139,23 @@ public class Drivetrain extends Subsystem
     return ((int)(((speed + 350) / 700.0) * 100) / 100.0);
   }
 
-  public double getLeftEncRate() {
+  public double getLeftEncRate() 
+  {
     return this.leftEnc.getRate();
   }
 
-  public double getLeftEncDist() {
+  public double getLeftEncDist() 
+  {
     return this.leftEnc.getDistance();
   }
 
-  public double getRightEncRate() {
+  public double getRightEncRate() 
+  {
     return this.rightEnc.getRate();
   }
 
-  public double getRightEncDist() {
+  public double getRightEncDist() 
+  {
     return this.rightEnc.getDistance();
   }
 
@@ -148,15 +164,18 @@ public class Drivetrain extends Subsystem
     return this.GYRO;
   }
 
-  public double getGyroAngle() {
+  public double getGyroAngle() 
+  {
     return this.GYRO.getAngle(); 
   }
 
-  public double getGyroAxis() {
+  public double getGyroAxis() 
+  {
     return this.GYRO.getBoardYawAxis().board_axis.getValue();
   }
 
-  public void resetGyro() {
+  public void resetGyro() 
+  {
     this.GYRO.reset();
     this.GYRO.zeroYaw();
   }
