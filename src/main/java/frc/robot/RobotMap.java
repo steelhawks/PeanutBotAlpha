@@ -65,16 +65,6 @@ public class RobotMap
     return this.LEFT_MOTOR_PORT_ONE;
   }
 
-  public int getShiftPortOn()
-  {
-    return this.SHIFT_PORT_ON;
-  }
-
-  public int getShiftPortOff()
-  {
-    return this.SHIFT_PORT_OFF;
-  }
-
   public int getLeftEncPortA()
   {
     return this.LEFT_ENC_PORT_A;
