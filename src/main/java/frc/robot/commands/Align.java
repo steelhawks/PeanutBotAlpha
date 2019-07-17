@@ -15,7 +15,7 @@ public class Align extends Command
     public Align() {
         requires(Robot.DRIVETRAIN);
         requires(Robot.VISION);
-        requires(Robot.ULTRA);
+        requires(Robot.SENSORS);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class Align extends Command
         Robot.VISION.setAngle(Robot.VISION.getNTAngle());
         Robot.VISION.setXPosLeftLimit(157.5);
         Robot.VISION.setXPosRightLimit(162.5);
-        Robot.ULTRA.enable();
+        Robot.SENSORS.enable();
     }
 
     @Override
@@ -45,13 +45,13 @@ public class Align extends Command
     protected void end()
     {
         Robot.DRIVETRAIN.stop();
-        Robot.ULTRA.disable();
+        Robot.SENSORS.disable();
     }
 
     @Override
     protected void interrupted()
     {
         Robot.DRIVETRAIN.stop();
-        Robot.ULTRA.disable();
+        Robot.SENSORS.disable();
     }
 }

@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018 FIRST. All Rights Reserved.                             *
+/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -12,9 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import frc.robot.commands.DiffDrive;
@@ -23,57 +21,57 @@ import frc.robot.Robot;
 public class Drivetrain extends Subsystem 
 {
   //SPARK MAX LEFT MOTORS
-  private final WPI_TalonSRX LEFT_M_ONE;
+  private final WPI_TalonSRX m_leftOne;
   
   //SPARK MAX RIGHT MOTOR
-  private final WPI_TalonSRX RIGHT_M_ONE;
+  private final WPI_TalonSRX m_rightOne;
 
   //SPEED CONTROLLER GROUPS
-  private final SpeedControllerGroup LEFT_M_GROUP;
-  private final SpeedControllerGroup RIGHT_M_GROUP;
+  public final SpeedControllerGroup m_leftGroup;
+  public final SpeedControllerGroup m_rightGroup;
 
   //DIFFERENTIAL DRIVE
-  private final DifferentialDrive DIFF_DRIVE;
+  private final DifferentialDrive diffDrive;
 
   //VARIABLE RPM ELECTRO-SHIFT
   private int shiftStatus;
   private double rPMCoefficient;
 
   //NAVX MXP GYRO
-  private final AHRS GYRO;
-  private final double KP_GYRO;
+  public final AHRS gyro;
+  private final double g_constant;
 
   //GRAYHILL OPTICAL ENCODERS
-  public Encoder leftEnc;
-  public Encoder rightEnc;
+  public Encoder enc_left;
+  public Encoder enc_right;
 
   //DRIVETRAIN CONSTRUCTOR
   public Drivetrain() 
   {
     //SPARK MAX LEFT MOTORS
-    this.LEFT_M_ONE = new WPI_TalonSRX(Robot.ROBOTMAP.getLeftMotorPortOne());
+    this.m_leftOne = new WPI_TalonSRX(Robot.ROBOTMAP.m_leftOne);
     
     //SPARK MAX RIGHT MOTORS
-    this.RIGHT_M_ONE = new WPI_TalonSRX(Robot.ROBOTMAP.getRightMotorPortOne());
+    this.m_rightOne = new WPI_TalonSRX(Robot.ROBOTMAP.m_rightOne);
 
     //SPEED CONTROLLER GROUPS
-    this.LEFT_M_GROUP = new SpeedControllerGroup(this.LEFT_M_ONE);
-    this.RIGHT_M_GROUP = new SpeedControllerGroup(this.RIGHT_M_ONE);
+    this.m_leftGroup = new SpeedControllerGroup(this.m_leftOne);
+    this.m_rightGroup = new SpeedControllerGroup(this.m_rightOne);
 
     //DIFFERENTIAL DRIVE
-    this.DIFF_DRIVE = new DifferentialDrive(this.LEFT_M_GROUP, this.RIGHT_M_GROUP);
+    this.diffDrive = new DifferentialDrive(this.m_leftGroup, this.m_rightGroup);
 
     //NAVX MXP GYRO
-    this.GYRO = new AHRS(SPI.Port.kMXP);
-    this.KP_GYRO = Robot.ROBOTMAP.getKPGyro();
+    this.gyro = new AHRS(SPI.Port.kMXP);
+    this.g_constant = Robot.ROBOTMAP.g_constant;
 
     //VARIABLE RPM ELECTRO-SHIFT
     this.shiftStatus = 1;
     this.rPMCoefficient = 1.75;
 
     //GRAYHILL OPTICAL ENCODERS
-    this.leftEnc = new Encoder(Robot.ROBOTMAP.getLeftEncPortA(), Robot.ROBOTMAP.getLeftEncPortB(), false, EncodingType.k4X);
-    this.rightEnc = new Encoder(Robot.ROBOTMAP.getRightEncPortA(), Robot.ROBOTMAP.getRightEncPortB(), false, EncodingType.k4X);
+    this.enc_left = new Encoder(Robot.ROBOTMAP.enc_leftA, Robot.ROBOTMAP.enc_leftB, false, EncodingType.k4X);
+    this.enc_right = new Encoder(Robot.ROBOTMAP.enc_rightA, Robot.ROBOTMAP.enc_rightB, false, EncodingType.k4X);
   }
 
   @Override
@@ -83,9 +81,9 @@ public class Drivetrain extends Subsystem
   }
 
   //DRIVING METHOD
-  public void arcadeDrive(Joystick stick) 
+  public void arcadeDrive() 
   {
-    this.DIFF_DRIVE.arcadeDrive(stick.getY(), -stick.getTwist());
+    this.diffDrive.arcadeDrive(this.rPMCoefficient * Robot.OI.js_drive.getY(), -Robot.OI.js_drive.getTwist());
   }
 
   //SHIFTING METHOD
@@ -94,7 +92,7 @@ public class Drivetrain extends Subsystem
     if (this.shiftStatus == 1) 
     {
       this.shiftStatus = 2;
-      this.rPMCoefficient = 1.5;
+      this.rPMCoefficient = (2.0/3);
     } 
     else if (this.shiftStatus == 2)
     {
@@ -104,27 +102,27 @@ public class Drivetrain extends Subsystem
     else if (this.shiftStatus == 3)
     {
       this.shiftStatus = 1;
-      this.rPMCoefficient = 1.75;
+      this.rPMCoefficient = 0.5;
     }
   }
 
   //MOVING STRAIGHT USING THE GYRO METHOD
   public void gyroMoveStraight(double speed)
   {
-    this.DIFF_DRIVE.arcadeDrive(speed, -this.GYRO.getAngle() * this.KP_GYRO);
+    this.diffDrive.arcadeDrive(speed, -this.gyro.getAngle() * this.g_constant);
   }
 
   //MOVING STRAIGHT USING GYRO AND ANGLE VALUE METHOD
   public void gyroMoveStraight(double speed, double angle)
   {
-    this.DIFF_DRIVE.arcadeDrive(-speed, -angle * this.KP_GYRO);
+    this.diffDrive.arcadeDrive(-speed, -angle * this.g_constant);
   }
 
   //ROTATE ROBOT
   public void rotate(double speed)
   {
-    this.LEFT_M_GROUP.set(speed);
-    this.RIGHT_M_GROUP.set(speed);
+    this.m_leftGroup.set(speed);
+    this.m_rightGroup.set(speed);
   }
 
   //STOP ROBOT
@@ -139,44 +137,9 @@ public class Drivetrain extends Subsystem
     return ((int)(((speed + 350) / 700.0) * 100) / 100.0);
   }
 
-  public double getLeftEncRate() 
-  {
-    return this.leftEnc.getRate();
-  }
-
-  public double getLeftEncDist() 
-  {
-    return this.leftEnc.getDistance();
-  }
-
-  public double getRightEncRate() 
-  {
-    return this.rightEnc.getRate();
-  }
-
-  public double getRightEncDist() 
-  {
-    return this.rightEnc.getDistance();
-  }
-
-  public AHRS getGyro()
-  {
-    return this.GYRO;
-  }
-
-  public double getGyroAngle() 
-  {
-    return this.GYRO.getAngle(); 
-  }
-
-  public double getGyroAxis() 
-  {
-    return this.GYRO.getBoardYawAxis().board_axis.getValue();
-  }
-
   public void resetGyro() 
   {
-    this.GYRO.reset();
-    this.GYRO.zeroYaw();
+    this.gyro.reset();
+    this.gyro.zeroYaw();
   }
 }

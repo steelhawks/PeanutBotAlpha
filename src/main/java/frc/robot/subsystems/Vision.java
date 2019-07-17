@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+
 package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.*;
@@ -20,18 +27,18 @@ public class Vision extends Subsystem
     //Aligns the robot
     public void align()
     {
-        if (Robot.OI.getDriveJoystick().getRawButtonPressed(2))
+        if (Robot.OI.js_drive.getRawButtonPressed(2))
         {
             end();
         }
         else if (!this.initAlign)
         {
             System.out.println("Aligning");
-            if (Math.abs(Robot.DRIVETRAIN.getGyro().getAngle()) < (getAngle() - 0.1) && getXPos() < getXPosLeftLimit())
+            if (Math.abs(Robot.DRIVETRAIN.gyro.getAngle()) < (getAngle() - 0.1) && getXPos() < getXPosLeftLimit())
             {
                 Robot.DRIVETRAIN.rotate(0.325);
             }
-            else if(Math.abs(Robot.DRIVETRAIN.getGyro().getAngle()) < (getAngle() - 0.1) && getXPos() > getXPosRightLimit()) 
+            else if(Math.abs(Robot.DRIVETRAIN.gyro.getAngle()) < (getAngle() - 0.1) && getXPos() > getXPosRightLimit()) 
             {
 			    Robot.DRIVETRAIN.rotate(-0.325);
             }
@@ -46,9 +53,9 @@ public class Vision extends Subsystem
         }
         else
         {
-            if (!Robot.ULTRA.isClose())
+            if (!Robot.SENSORS.isClose())
             {
-                Robot.DRIVETRAIN.gyroMoveStraight(Robot.DRIVETRAIN.decimalSpeed(Robot.ULTRA.getRange()));
+                Robot.DRIVETRAIN.gyroMoveStraight(Robot.DRIVETRAIN.decimalSpeed(Robot.SENSORS.ULTRA.getRangeInches()));
             }
             else
             {

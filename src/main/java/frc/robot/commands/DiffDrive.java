@@ -23,7 +23,7 @@ public class DiffDrive extends Command
   @Override
   protected void execute() 
   {
-    Robot.DRIVETRAIN.arcadeDrive(Robot.OI.getDriveJoystick());
+    Robot.DRIVETRAIN.arcadeDrive();
   }
 
   @Override

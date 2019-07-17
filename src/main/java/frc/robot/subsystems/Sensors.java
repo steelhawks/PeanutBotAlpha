@@ -1,12 +1,19 @@
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import frc.robot.Robot;
 
-public class Ultra extends Subsystem
+public class Sensors extends Subsystem
 {
-    private final Ultrasonic ULTRA = new Ultrasonic(Robot.ROBOTMAP.getUltraPing(), Robot.ROBOTMAP.getUltraEcho());
+    public final Ultrasonic ULTRA = new Ultrasonic(Robot.ROBOTMAP.s_ultraPing, Robot.ROBOTMAP.s_ultraEcho);
 
     @Override
     public void initDefaultCommand() {}
@@ -20,16 +27,6 @@ public class Ultra extends Subsystem
     public void disable()
     {
         this.ULTRA.setEnabled(false);
-    }
-
-    public double getRange()
-    {
-        return this.ULTRA.getRangeInches();
-    }
-
-    public double getRangeMM()
-    {
-        return this.ULTRA.getRangeMM();
     }
 
     public boolean isCloseShift()
