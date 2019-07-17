@@ -44,6 +44,9 @@ public class Robot extends TimedRobot
   {
     SmartDashboard.putString("Match Time", returnTime());
     SmartDashboard.putBoolean("Valid Path", Robot.PATHFOLLOWER.isValid());
+    SmartDashboard.putNumber("Left Motor Group", Robot.DRIVETRAIN.m_leftGroup.get());
+    SmartDashboard.putNumber("Right Motor Group", Robot.DRIVETRAIN.m_rightGroup.get());
+    SmartDashboard.putNumber("Gyro Angle", Robot.DRIVETRAIN.gyro.getAngle());
   }
 
   @Override

@@ -45,10 +45,12 @@ public class PathFollower
       this.follower.startPeriodic(left_trajectory.get(0).dt);
 
       this.valid = true;
+      System.out.println("Path was successfully loaded!");
     }
     catch (IOException e)
     {
       this.valid = false;
+      System.out.println("Path failed to load...");
     }
   }
 
