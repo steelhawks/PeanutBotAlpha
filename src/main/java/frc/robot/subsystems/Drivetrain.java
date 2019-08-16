@@ -12,7 +12,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
@@ -85,7 +84,7 @@ public class Drivetrain extends Subsystem
   //DRIVING METHOD
   public void arcadeDrive(Joystick stick) 
   {
-    this.DIFF_DRIVE.arcadeDrive(stick.getY(), -stick.getTwist());
+    this.DIFF_DRIVE.arcadeDrive(stick.getY() / this.rPMCoefficient, -stick.getTwist(), false);
   }
 
   //SHIFTING METHOD
