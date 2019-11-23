@@ -19,10 +19,10 @@ public class Robot extends TimedRobot
    * Robot Objects
    *****/
   public static final RobotMap ROBOTMAP = new RobotMap();
+  public static final OI OI = new OI();
   public static final Drivetrain DRIVETRAIN = new Drivetrain();
   public static final Vision VISION = new Vision();
   public static final Ultra ULTRA = new Ultra();
-  public static final OI OI = new OI();
 
   @Override
   public void robotInit() {}
