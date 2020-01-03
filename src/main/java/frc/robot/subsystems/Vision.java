@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) 2020 FIRST. All Rights Reserved.                             */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+
 package frc.robot.subsystems;
 
 import edu.wpi.first.networktables.*;
@@ -20,7 +27,7 @@ public class Vision extends Subsystem
     //Aligns the robot
     public void align()
     {
-        if (Robot.OI.getDriveJoystick().getRawButtonPressed(2))
+        if (Robot.COMMAND_LINKER.DRIVE_JOYSTICK.getRawButtonPressed(2))
         {
             end();
         }

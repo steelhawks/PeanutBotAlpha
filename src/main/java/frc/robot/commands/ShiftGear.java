@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
+/* Copyright (c) 2020 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -7,31 +7,35 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Robot;
+import java.util.Set;
 
-public class ShiftGear extends Command {
+public class ShiftGear implements Command 
+{
 
-  public ShiftGear() {
-    requires(Robot.DRIVETRAIN);
+  public ShiftGear() {}
+
+  @Override
+  public Set<Subsystem> getRequirements() 
+  {
+    return null;
   }
 
   @Override
-  protected void initialize() {}
+  public void initialize() {}
 
   @Override
-  protected void execute() {
+  public void execute() {
     Robot.DRIVETRAIN.shiftGear();
   }
     
   @Override
-  protected boolean isFinished() {
+  public boolean isFinished() {
     return true;
   }
 
   @Override
-  protected void end() {}
-
-  @Override
-  protected void interrupted() {}
+  public void end(boolean interrupted) {}
 }

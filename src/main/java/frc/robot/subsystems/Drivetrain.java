@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018 FIRST. All Rights Reserved.                             *
+/* Copyright (c) 2020 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -9,42 +9,35 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import frc.robot.commands.DiffDrive;
 import frc.robot.Robot;
 
-public class Drivetrain extends Subsystem 
+public class Drivetrain extends SubsystemBase 
 {
   //SPARK MAX LEFT MOTORS
-  private final WPI_TalonSRX LEFT_M_ONE;
+  public final WPI_TalonSRX LEFT_M_ONE;
   
   //SPARK MAX RIGHT MOTOR
-  private final WPI_TalonSRX RIGHT_M_ONE;
+  public final WPI_TalonSRX RIGHT_M_ONE;
 
   //SPEED CONTROLLER GROUPS
-  private final SpeedControllerGroup LEFT_M_GROUP;
-  private final SpeedControllerGroup RIGHT_M_GROUP;
+  public final SpeedControllerGroup LEFT_M_GROUP;
+  public final SpeedControllerGroup RIGHT_M_GROUP;
 
   //DIFFERENTIAL DRIVE
-  private final DifferentialDrive DIFF_DRIVE;
+  public final DifferentialDrive DIFF_DRIVE;
 
   //VARIABLE RPM ELECTRO-SHIFT
-  private int shiftStatus;
-  private double rPMCoefficient;
+  public int shiftStatus;
+  public double rPMCoefficient;
 
   //NAVX MXP GYRO
   private final AHRS GYRO;
   private final double KP_GYRO;
-
-  //GRAYHILL OPTICAL ENCODERS
-  public Encoder leftEnc;
-  public Encoder rightEnc;
 
   //DRIVETRAIN CONSTRUCTOR
   public Drivetrain() 
@@ -69,16 +62,6 @@ public class Drivetrain extends Subsystem
     //VARIABLE RPM ELECTRO-SHIFT
     this.shiftStatus = 1;
     this.rPMCoefficient = 1.75;
-
-    //GRAYHILL OPTICAL ENCODERS
-    this.leftEnc = new Encoder(Robot.ROBOTMAP.getLeftEncPortA(), Robot.ROBOTMAP.getLeftEncPortB(), false, EncodingType.k4X);
-    this.rightEnc = new Encoder(Robot.ROBOTMAP.getRightEncPortA(), Robot.ROBOTMAP.getRightEncPortB(), false, EncodingType.k4X);
-  }
-
-  @Override
-  public void initDefaultCommand() 
-  {
-    setDefaultCommand(new DiffDrive());
   }
 
   //DRIVING METHOD
@@ -136,26 +119,6 @@ public class Drivetrain extends Subsystem
   public double decimalSpeed(double speed)
   {
     return ((int)(((speed + 350) / 700.0) * 100) / 100.0);
-  }
-
-  public double getLeftEncRate() 
-  {
-    return this.leftEnc.getRate();
-  }
-
-  public double getLeftEncDist() 
-  {
-    return this.leftEnc.getDistance();
-  }
-
-  public double getRightEncRate() 
-  {
-    return this.rightEnc.getRate();
-  }
-
-  public double getRightEncDist() 
-  {
-    return this.rightEnc.getDistance();
   }
 
   public AHRS getGyro()
