@@ -57,7 +57,15 @@ dependencies {
     // Enable simulation gui support. Must check the box in vscode to enable support
     // upon debugging
     simulation wpi.deps.sim.gui(wpi.platforms.desktop, false)
+
+    // https://mvnrepository.com/artifact/org.json/json
+    compile group: 'org.json', name: 'json', version: '20090211'
+    compile "org.java-websocket:Java-WebSocket:1.4.0"
 }
+
+// repositories {
+//     mavenCentral()
+// }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
 // in order to make them all available at runtime. Also adding the manifest so WPILib

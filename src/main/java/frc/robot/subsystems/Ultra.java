@@ -7,16 +7,13 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import frc.robot.Robot;
 
-public class Ultra extends Subsystem
+public class Ultra extends SubsystemBase
 {
     private final Ultrasonic ULTRA = new Ultrasonic(Robot.ROBOTMAP.getUltraPing(), Robot.ROBOTMAP.getUltraEcho());
-
-    @Override
-    public void initDefaultCommand() {}
 
     public void enable()
     {

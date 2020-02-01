@@ -9,6 +9,11 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.Align;
+import frc.robot.commands.DiffDrive;
+import frc.robot.commands.ShiftGear;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Ultra;
@@ -25,10 +30,29 @@ public class Robot extends TimedRobot
   public static final CommandLinker COMMAND_LINKER = new CommandLinker();
 
   @Override
-  public void robotInit() {}
+  public void robotInit() 
+  {
+    COMMAND_LINKER.configureCommands();
+    VISION.connectToSocket();
+
+   /* CommandScheduler.getInstance().registerSubsystem(Robot.DRIVETRAIN);
+    CommandScheduler.getInstance().registerSubsystem(Robot.ULTRA);
+    CommandScheduler.getInstance().registerSubsystem(Robot.VISION);
+
+    Button SHIFT_BUTTON = new JoystickButton(Robot.COMMAND_LINKER.DRIVE_JOYSTICK, Robot.ROBOTMAP.getShiftButton());
+    Button ALIGN_BUTTON = new JoystickButton(Robot.COMMAND_LINKER.DRIVE_JOYSTICK, Robot.ROBOTMAP.getAlignButton());
+
+    SHIFT_BUTTON.whenPressed(new ShiftGear());
+    ALIGN_BUTTON.whenPressed(new Align());
+
+    CommandScheduler.getInstance().setDefaultCommand(Robot.DRIVETRAIN, new DiffDrive());*/
+  }
 
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() 
+  {
+    VISION.objectPresent();
+  }
 
   @Override
   public void disabledInit() {}
@@ -43,7 +67,10 @@ public class Robot extends TimedRobot
   public void autonomousPeriodic() {}
 
   @Override
-  public void teleopInit() {}
+  public void teleopInit() 
+  {
+    CommandScheduler.getInstance().enable();
+  }
 
   @Override
   public void teleopPeriodic() 

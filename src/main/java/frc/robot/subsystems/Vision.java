@@ -6,27 +6,73 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.subsystems;
+import javax.print.DocFlavor.STRING;
 
+import org.json.*;
 import edu.wpi.first.networktables.*;
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.subsystems.TrackingWS;
 
-public class Vision extends Subsystem
+public class Vision extends SubsystemBase
 {
-    private NetworkTableInstance networkTables = NetworkTableInstance.getDefault();
-    private NetworkTable networkTablesData = networkTables.getTable("CVResultsTable");
+    // private NetworkTableInstance networkTables = NetworkTableInstance.getDefault(); // :)   
+    // private NetworkTable networkTablesData = networkTables.getTable("SmartDashboard");
+
     private boolean initAlign;
     private boolean alignAngle;
     private double angle;
     private double xPosLeftLimit;
     private double xPosRightLimit;
+    private String trackingData;
+    private JSONObject closestTarget;
 
-    @Override
-    public void initDefaultCommand() {}
+    
 
     //Aligns the robot
+    public void alignCurve()
+    {
+        double tuneValue = 1000;
+
+        if (Robot.COMMAND_LINKER.DRIVE_JOYSTICK.getRawButtonPressed(2))
+        {
+            end();
+        }
+        else if (getDistance() > 30) //!Robot.IR.isClose()
+        {
+            //Robot.DRIVETRAIN.gyroMoveStraight(Robot.ULTRA.getRange() / 40);
+            if (Math.abs(Robot.DRIVETRAIN.getGyro().getAngle()) < getNTAngle() && getXPos() < getXPosLeftLimit())
+            {
+                // Robot.DRIVETRAIN.gyroMoveStraight(-0.4, -(int)(getNTAngle())); //Robot.ULTRA.getRange() / 500
+                Robot.DRIVETRAIN.LEFT_M_GROUP.set(-(getDistance()) / tuneValue);
+                Robot.DRIVETRAIN.RIGHT_M_GROUP.set((getDistance() * (getXPosDiff(getXPosLeftLimit()) * 0.45 )) / tuneValue);
+            }
+            else if(Math.abs(Robot.DRIVETRAIN.getGyro().getAngle()) < getNTAngle() && getXPos() > getXPosRightLimit()) 
+            {
+                // Robot.DRIVETRAIN.gyroMoveStraight(-0.4, (int)(getNTAngle())); //Robot.ULTRA.getRange() / 500
+                Robot.DRIVETRAIN.LEFT_M_GROUP.set(-(getDistance() * (getXPosDiff(getXPosRightLimit()) * 0.45 )) / tuneValue);
+                Robot.DRIVETRAIN.RIGHT_M_GROUP.set((getDistance()) / tuneValue);
+            }
+            else 
+            {
+                // Robot.DRIVETRAIN.gyroMoveStraight(-0.4); //Robot.ULTRA.getRange() / 500
+                Robot.DRIVETRAIN.LEFT_M_GROUP.set(-(getDistance()) / tuneValue);
+                Robot.DRIVETRAIN.RIGHT_M_GROUP.set((getDistance()) / tuneValue);
+            }
+        }
+        else
+        {
+            Robot.DRIVETRAIN.LEFT_M_GROUP.set(0);
+            Robot.DRIVETRAIN.RIGHT_M_GROUP.set(0);
+            alignAngle = true;
+        } 
+    }
+
     public void align()
     {
+        getXPos();
+        getNTAngle();
+        getDistance();
         if (Robot.COMMAND_LINKER.DRIVE_JOYSTICK.getRawButtonPressed(2))
         {
             end();
@@ -36,26 +82,26 @@ public class Vision extends Subsystem
             System.out.println("Aligning");
             if (Math.abs(Robot.DRIVETRAIN.getGyro().getAngle()) < (getAngle() - 0.1) && getXPos() < getXPosLeftLimit())
             {
-                Robot.DRIVETRAIN.rotate(0.325);
+                Robot.DRIVETRAIN.rotate(0.225);
             }
             else if(Math.abs(Robot.DRIVETRAIN.getGyro().getAngle()) < (getAngle() - 0.1) && getXPos() > getXPosRightLimit()) 
             {
-			    Robot.DRIVETRAIN.rotate(-0.325);
+                Robot.DRIVETRAIN.rotate(-0.225);
             }
             else 
             {
-			    Robot.DRIVETRAIN.resetGyro();
+                Robot.DRIVETRAIN.resetGyro();
                 Robot.DRIVETRAIN.stop();
                 System.out.println("Aligned!");
                 this.initAlign = true;
-
             }
         }
         else
         {
-            if (!Robot.ULTRA.isClose())
+            if (getDistance() > 30) //!Robot.ULTRA.isClose()
             {
-                Robot.DRIVETRAIN.gyroMoveStraight(Robot.DRIVETRAIN.decimalSpeed(Robot.ULTRA.getRange()));
+                // Robot.DRIVETRAIN.gyroMoveStraight(-0.6); //Robot.DRIVETRAIN.decimalSpeed(Robot.ULTRA.getRange())
+                alignCurve();
             }
             else
             {
@@ -65,34 +111,101 @@ public class Vision extends Subsystem
             }
         } 
     }
+// :)
+    public void connectToSocket(){
+        try{
+            TrackingWS trackingWS= new TrackingWS();
+            trackingWS.connect();
+            trackingData = trackingWS.getTargetData();
+        }
+        catch(Exception e){
+            System.out.println("could not connect to socket");
+        }
+
+    }
+
+    public boolean objectPresent()
+    {
+        try 
+        {
+            // JSONObject targetData = new JSONObject(networkTablesData.getEntry("vision/target/data").getValue());
+            JSONObject targetData = new JSONObject(trackingData);
+            System.out.println(targetData);
+            String targetDataValues = (targetData.getString("targets"));
+            // JSONArray targetArray = new JSONArray(targetDataValues);
+            // closestTarget = (JSONObject)targetArray.get(0);
+            // System.out.println("Value found in JSON Array!");
+            //System.out.println(closestTarget);
+            //System.out.println("xpos: " + getXPos() + "\nangle: " + getNTAngle() + "\ndistance: " + getDistance());
+            //Robot.ULTRA.test();
+            return true;
+        }
+        catch (Exception e)
+        {
+            // System.out.println("ERROR: Value not found in JSON Array!");
+            System.out.println("Is the Jetson connected? Is the code running? Cameras Plugged in?");
+            return false;
+        }
+    }
+
+    public String getShape(){
+        try{
+            return closestTarget.getString("shape");
+        }
+        catch (Exception e){
+            return "object not found";
+        }
+    }
 
     //Returns the x coordinate value of the center of the hatch
     public double getXPos()
     {
-        System.out.println("Center X Tape: " + networkTablesData.getEntry("CenterPoint X Tape").getDouble(0.0));
-       return networkTablesData.getEntry("CenterPoint X Tape").getDouble(0.0);
-
+        try{
+            System.out.println(getShape() + " Center X: " + closestTarget.getDouble("xpos"));
+            return closestTarget.getInt("xpos");
+        }
+        catch(Exception e){
+            return 0;
+        }
+        
     }
 
     //Returns the y coordinate value of the center of the hatch
     public double getYPos()
     {
-        System.out.println("Center Y Tape: " + networkTablesData.getEntry("CenterPoint Y Tape").getDouble(0.0));
-        return networkTablesData.getEntry("CenterPoint Y Tape").getDouble(0.0);
+        try{
+            System.out.println(getShape() + " Center Y: " + closestTarget.getDouble("ypos"));
+            return closestTarget.getInt("ypos");
+        }
+        catch(Exception e){
+            return 0;
+        }
+       
     }
 
     //Returns the apparent calculated distance between the robot and the hatch
     public double getDistance()
     {
-        System.out.println("Distance Tape: " + networkTablesData.getEntry("Distance Tape").getDouble(0.0));
-        return networkTablesData.getEntry("Distance Tape").getDouble(0.0);
+        try{
+            System.out.println(getShape() + " Distance: " + closestTarget.getDouble("dist"));
+            return closestTarget.getInt("dist");
+        }
+        catch(Exception e){
+            return 0;
+        }
+        
     }
 
-    //Returns the angle that the robot's line of vision and the center of the hatch creates 
+    //Returns the angle that the robot's line of vision and the center of the hatch creates || :/
     public double getNTAngle()
     {
-        System.out.println("NT Angle Tape: " + networkTablesData.getEntry("Angle Tape").getDouble(0.0));
-        return networkTablesData.getEntry("Angle Tape").getDouble(0.0);
+        try{
+            System.out.println(getShape() + " Angle to Line of Vision: " + closestTarget.getDouble("angle"));
+            return closestTarget.getDouble("angle");
+        }
+        catch(Exception e){
+            return 0;
+        }
     }
 
     //Sets the angle that was returned into an angle variable that can be used
@@ -162,11 +275,11 @@ public class Vision extends Subsystem
         initAlign = false;
     }
 
-    public void test()
-    {
-        getNTAngle();
-        getXPos();
-        getYPos();
-        getDistance();
-    }
+    // public void test()
+    // {
+    //     getNTAngle();
+    //     getXPos();
+    //     getYPos();
+    //     getDistance();
+    // }
 }

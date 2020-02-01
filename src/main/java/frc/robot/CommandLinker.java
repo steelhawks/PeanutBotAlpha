@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) 2020 FIRST. All Rights Reserved.                             */
+/* Copyright (c) 2020 FIRST. All Rights Resered.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -22,8 +22,17 @@ public class CommandLinker
    *****/
   public final Joystick DRIVE_JOYSTICK = new Joystick(Robot.ROBOTMAP.getJoystickPortOne());
 
-  public CommandLinker()
+  public CommandLinker() 
   {
+    //configureCommands();
+  }
+
+  public void configureCommands()
+  {
+    CommandScheduler.getInstance().registerSubsystem(Robot.DRIVETRAIN);
+    CommandScheduler.getInstance().registerSubsystem(Robot.ULTRA);
+    CommandScheduler.getInstance().registerSubsystem(Robot.VISION);
+
     Button SHIFT_BUTTON = new JoystickButton(this.DRIVE_JOYSTICK, Robot.ROBOTMAP.getShiftButton());
     Button ALIGN_BUTTON = new JoystickButton(this.DRIVE_JOYSTICK, Robot.ROBOTMAP.getAlignButton());
 
