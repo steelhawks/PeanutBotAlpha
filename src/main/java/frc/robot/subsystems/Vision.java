@@ -6,10 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.subsystems;
-import javax.print.DocFlavor.STRING;
-
 import org.json.*;
-import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.TrackingWS;
@@ -24,7 +21,6 @@ public class Vision extends SubsystemBase
     private double angle;
     private double xPosLeftLimit;
     private double xPosRightLimit;
-    private String trackingData;
     private JSONObject closestTarget;
 
     
@@ -112,38 +108,37 @@ public class Vision extends SubsystemBase
         } 
     }
 // :)
-    public void connectToSocket(){
-        try{
-            TrackingWS trackingWS= new TrackingWS();
-            trackingWS.connect();
-            trackingData = trackingWS.getTargetData();
-        }
-        catch(Exception e){
-            System.out.println("could not connect to socket");
-        }
 
+    public boolean containsData(String data){
+        if(data.equals("{\"target\":[]}")){
+            return false;
+        }
+        else{
+            return true;
+        }
     }
 
-    public boolean objectPresent()
+    public boolean objectPresent(String trackingData)
     {
         try 
-        {
-            // JSONObject targetData = new JSONObject(networkTablesData.getEntry("vision/target/data").getValue());
-            JSONObject targetData = new JSONObject(trackingData);
-            System.out.println(targetData);
-            String targetDataValues = (targetData.getString("targets"));
-            // JSONArray targetArray = new JSONArray(targetDataValues);
-            // closestTarget = (JSONObject)targetArray.get(0);
-            // System.out.println("Value found in JSON Array!");
-            //System.out.println(closestTarget);
-            //System.out.println("xpos: " + getXPos() + "\nangle: " + getNTAngle() + "\ndistance: " + getDistance());
-            //Robot.ULTRA.test();
-            return true;
+        {   
+            if(containsData(trackingData)){
+                JSONObject targetData = new JSONObject(trackingData);
+                String targetDataValues = (targetData.getString("targets"));
+                JSONArray targetArray = new JSONArray(targetDataValues);
+                closestTarget = (JSONObject)targetArray.get(0);
+                System.out.println(getDistance());
+                return true;
+            }
+            else{
+                return false;
+            }
+            
         }
         catch (Exception e)
         {
             // System.out.println("ERROR: Value not found in JSON Array!");
-            System.out.println("Is the Jetson connected? Is the code running? Cameras Plugged in?");
+            System.out.println("No values found or the socket is not connected");
             return false;
         }
     }

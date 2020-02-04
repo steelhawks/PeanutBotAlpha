@@ -15,6 +15,7 @@ import frc.robot.commands.Align;
 import frc.robot.commands.DiffDrive;
 import frc.robot.commands.ShiftGear;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.TrackingWS;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Ultra;
 
@@ -28,12 +29,13 @@ public class Robot extends TimedRobot
   public static final Vision VISION = new Vision();
   public static final Ultra ULTRA = new Ultra();
   public static final CommandLinker COMMAND_LINKER = new CommandLinker();
+  public static final TrackingWS TRACKERWS = new TrackingWS();
 
   @Override
   public void robotInit() 
   {
     COMMAND_LINKER.configureCommands();
-    VISION.connectToSocket();
+    TRACKERWS.connect();
 
    /* CommandScheduler.getInstance().registerSubsystem(Robot.DRIVETRAIN);
     CommandScheduler.getInstance().registerSubsystem(Robot.ULTRA);
@@ -51,7 +53,7 @@ public class Robot extends TimedRobot
   @Override
   public void robotPeriodic() 
   {
-    VISION.objectPresent();
+    VISION.objectPresent(TRACKERWS.getTargetData());
   }
 
   @Override
