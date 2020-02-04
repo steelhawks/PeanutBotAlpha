@@ -40,11 +40,15 @@ public class RobotMap
    *****/
 
   //Input Ports
+
   private final int JOYSTICK_PORT_ONE = 0;
 
   //Button ports
   private final int SHIFT_BUTTON = 1;
   private final int ALIGN_BUTTON = 3;
+  private final int BAY_BUTTON = 8;
+  private final int PORT_BUTTON = 10;
+  private final int BALL_BUTTON = 9;
 
   /*****
    * Constructor methods
@@ -54,6 +58,7 @@ public class RobotMap
   /*****
    * Getter methods
    *****/
+
 
   public int getRightMotorPortOne()
   {
@@ -112,5 +117,17 @@ public class RobotMap
   public int getAlignButton()
   {
     return this.ALIGN_BUTTON;
+  }
+
+  public int getBallButton() {
+    return this.BALL_BUTTON;
+  }
+
+  public int getPortButton() {
+    return this.PORT_BUTTON;
+  } 
+
+  public int getBayButton() {
+    return this.BAY_BUTTON;
   }
 }

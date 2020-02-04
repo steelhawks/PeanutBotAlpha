@@ -11,9 +11,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.Align;
-import frc.robot.commands.DiffDrive;
-import frc.robot.commands.ShiftGear;
+import frc.robot.commands.*;
+import frc.robot.Robot;
 
 public class CommandLinker 
 {
@@ -35,9 +34,17 @@ public class CommandLinker
 
     Button SHIFT_BUTTON = new JoystickButton(this.DRIVE_JOYSTICK, Robot.ROBOTMAP.getShiftButton());
     Button ALIGN_BUTTON = new JoystickButton(this.DRIVE_JOYSTICK, Robot.ROBOTMAP.getAlignButton());
+    Button BAY_BUTTON = new JoystickButton(this.DRIVE_JOYSTICK, Robot.ROBOTMAP.getBayButton());
+    Button BALL_BUTTON = new JoystickButton(this.DRIVE_JOYSTICK, Robot.ROBOTMAP.getBallButton());
+    Button PORT_BUTTON = new JoystickButton(this.DRIVE_JOYSTICK, Robot.ROBOTMAP.getPortButton());
+
 
     SHIFT_BUTTON.whenPressed(new ShiftGear());
     ALIGN_BUTTON.whenPressed(new Align());
+    BAY_BUTTON.whenPressed(new RequestBay());
+    BALL_BUTTON.whenPressed(new RequestBall());
+    PORT_BUTTON.whenPressed(new RequestPort());
+
 
     CommandScheduler.getInstance().setDefaultCommand(Robot.DRIVETRAIN, new DiffDrive());
   }

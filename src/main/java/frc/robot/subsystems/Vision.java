@@ -23,8 +23,6 @@ public class Vision extends SubsystemBase
     private double xPosRightLimit;
     private JSONObject closestTarget;
 
-    
-
     //Aligns the robot
     public void alignCurve()
     {
@@ -34,7 +32,7 @@ public class Vision extends SubsystemBase
         {
             end();
         }
-        else if (getDistance() > 30) //!Robot.IR.isClose()
+        else if (getDistance() > 15) //!Robot.IR.isClose()
         {
             //Robot.DRIVETRAIN.gyroMoveStraight(Robot.ULTRA.getRange() / 40);
             if (Math.abs(Robot.DRIVETRAIN.getGyro().getAngle()) < getNTAngle() && getXPos() < getXPosLeftLimit())
@@ -78,7 +76,7 @@ public class Vision extends SubsystemBase
             System.out.println("Aligning");
             if (Math.abs(Robot.DRIVETRAIN.getGyro().getAngle()) < (getAngle() - 0.1) && getXPos() < getXPosLeftLimit())
             {
-                Robot.DRIVETRAIN.rotate(0.225);
+                Robot.DRIVETRAIN.rotate(0.225); 
             }
             else if(Math.abs(Robot.DRIVETRAIN.getGyro().getAngle()) < (getAngle() - 0.1) && getXPos() > getXPosRightLimit()) 
             {
@@ -94,7 +92,7 @@ public class Vision extends SubsystemBase
         }
         else
         {
-            if (getDistance() > 30) //!Robot.ULTRA.isClose()
+            if (getDistance() > 15) //!Robot.ULTRA.isClose()
             {
                 // Robot.DRIVETRAIN.gyroMoveStraight(-0.6); //Robot.DRIVETRAIN.decimalSpeed(Robot.ULTRA.getRange())
                 alignCurve();
@@ -127,7 +125,6 @@ public class Vision extends SubsystemBase
                 String targetDataValues = (targetData.getString("targets"));
                 JSONArray targetArray = new JSONArray(targetDataValues);
                 closestTarget = (JSONObject)targetArray.get(0);
-                System.out.println(getDistance());
                 return true;
             }
             else{
@@ -138,16 +135,18 @@ public class Vision extends SubsystemBase
         catch (Exception e)
         {
             // System.out.println("ERROR: Value not found in JSON Array!");
-            System.out.println("No values found or the socket is not connected");
             return false;
         }
     }
 
-    public String getShape(){
-        try{
+    public String getShape()
+    {
+        try
+        {
             return closestTarget.getString("shape");
         }
-        catch (Exception e){
+        catch (Exception e)
+        {
             return "object not found";
         }
     }
@@ -155,11 +154,13 @@ public class Vision extends SubsystemBase
     //Returns the x coordinate value of the center of the hatch
     public double getXPos()
     {
-        try{
+        try
+        {
             System.out.println(getShape() + " Center X: " + closestTarget.getDouble("xpos"));
             return closestTarget.getInt("xpos");
         }
-        catch(Exception e){
+        catch(Exception e)
+        {
             return 0;
         }
         
@@ -168,11 +169,13 @@ public class Vision extends SubsystemBase
     //Returns the y coordinate value of the center of the hatch
     public double getYPos()
     {
-        try{
+        try
+        {
             System.out.println(getShape() + " Center Y: " + closestTarget.getDouble("ypos"));
             return closestTarget.getInt("ypos");
         }
-        catch(Exception e){
+        catch(Exception e)
+        {
             return 0;
         }
        
@@ -181,11 +184,13 @@ public class Vision extends SubsystemBase
     //Returns the apparent calculated distance between the robot and the hatch
     public double getDistance()
     {
-        try{
+        try
+        {
             System.out.println(getShape() + " Distance: " + closestTarget.getDouble("dist"));
             return closestTarget.getInt("dist");
         }
-        catch(Exception e){
+        catch(Exception e)
+        {
             return 0;
         }
         
@@ -194,11 +199,13 @@ public class Vision extends SubsystemBase
     //Returns the angle that the robot's line of vision and the center of the hatch creates || :/
     public double getNTAngle()
     {
-        try{
+        try
+        {
             System.out.println(getShape() + " Angle to Line of Vision: " + closestTarget.getDouble("angle"));
             return closestTarget.getDouble("angle");
         }
-        catch(Exception e){
+        catch(Exception e)
+        {
             return 0;
         }
     }

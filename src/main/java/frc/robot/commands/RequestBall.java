@@ -14,50 +14,33 @@ import frc.robot.Robot;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Align implements Command
+public class RequestBall implements Command
 {
-    public Align() {}
+    public RequestBall() {}
 
     @Override
     public Set<Subsystem> getRequirements() 
     {
         Set<Subsystem> list = new HashSet<Subsystem>();
-        list.add(Robot.DRIVETRAIN);
         list.add(Robot.VISION);
-        list.add(Robot.ULTRA);
         return list;
     }
 
     @Override
-    public void initialize()
-    {
-        Robot.DRIVETRAIN.resetGyro();
-        Robot.VISION.reset();
-        Robot.VISION.setAngle(Robot.VISION.getNTAngle());
-        Robot.VISION.setXPosLeftLimit(319.0);
-        Robot.VISION.setXPosRightLimit(321.0);
-        Robot.ULTRA.enable();
-    }
+    public void initialize() {}
 
     @Override
     public void execute()
     {
-        if (Robot.VISION.objectPresent(Robot.TRACKERWS.getTargetData()));
-        {
-            Robot.VISION.align();
-        }
+        Robot.DASHBOARDWS.send("BALL");
     }
 
     @Override
     public boolean isFinished()
     {
-        return Robot.VISION.isAligned();
+        return true;
     }
 
     @Override
-    public void end(boolean interrupted)
-    {
-        Robot.DRIVETRAIN.stop();
-        Robot.ULTRA.disable();
-    }
+    public void end(boolean interrupted) {}
 }

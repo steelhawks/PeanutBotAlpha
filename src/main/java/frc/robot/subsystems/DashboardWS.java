@@ -7,13 +7,12 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
 
-public class TrackingWS {
-    private String targetData;
-    private WebSocketClient dataWS;
+public class DashboardWS {
+    private WebSocketClient dashboardWS;
 
-    public TrackingWS(){
+    public DashboardWS(){
             try {
-                dataWS = new WebSocketClient(new URI("ws://10.26.1.74:8080/tracking/ws"), new Draft_6455()){
+                dashboardWS = new WebSocketClient(new URI("ws://10.26.1.74:8080/dashboard/ws")){
                     @Override
                     public void onOpen(ServerHandshake handshakedata) {
                         System.out.println("Socket opened");
@@ -22,13 +21,12 @@ public class TrackingWS {
                     @Override
                     public void onMessage(String message) {
                         //System.out.println(message);
-                        targetData = message;
                     }
                 
                     @Override
                     public void onError(Exception ex) {
                         System.out.println("ERROR" + ex);
-                        dataWS.close();
+                        dashboardWS.close();
                     }
                 
                     @Override
@@ -45,13 +43,17 @@ public class TrackingWS {
             
     }
 
-    public String getTargetData() {
-        return targetData;
+    public void send(String cameraMode){
+        String message = "{\"controls\":{\"camera_mode\":\"" + cameraMode + "\"}}";
+        System.out.println(message);
+        dashboardWS.send(message);
     }
+
 
     public void connect(){
         try{
-            dataWS.connect();
+            dashboardWS.connect();
+            System.out.println("connecting to socket");
         }
         catch(Exception e){
             System.out.println("Socket not open");

@@ -9,11 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.button.Button;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.Align;
-import frc.robot.commands.DiffDrive;
-import frc.robot.commands.ShiftGear;
+import frc.robot.subsystems.DashboardWS;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.TrackingWS;
 import frc.robot.subsystems.Vision;
@@ -30,12 +26,14 @@ public class Robot extends TimedRobot
   public static final Ultra ULTRA = new Ultra();
   public static final CommandLinker COMMAND_LINKER = new CommandLinker();
   public static final TrackingWS TRACKERWS = new TrackingWS();
+  public static final DashboardWS DASHBOARDWS = new DashboardWS();
 
   @Override
   public void robotInit() 
   {
     COMMAND_LINKER.configureCommands();
     TRACKERWS.connect();
+    DASHBOARDWS.connect();
 
    /* CommandScheduler.getInstance().registerSubsystem(Robot.DRIVETRAIN);
     CommandScheduler.getInstance().registerSubsystem(Robot.ULTRA);
