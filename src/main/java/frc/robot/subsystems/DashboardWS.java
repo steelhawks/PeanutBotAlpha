@@ -6,9 +6,11 @@ import java.net.URI;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.*;
 
 public class DashboardWS {
     private WebSocketClient dashboardWS;
+    String controls = "";
 
     public DashboardWS(){
             try {
@@ -20,7 +22,7 @@ public class DashboardWS {
                 
                     @Override
                     public void onMessage(String message) {
-                        //System.out.println(message);
+                        controls = message;
                     }
                 
                     @Override
@@ -49,6 +51,18 @@ public class DashboardWS {
         dashboardWS.send(message);
     }
 
+    public String getCameraMode(){
+        try{
+            JSONObject websocketData = new JSONObject(controls);
+            JSONObject visionControls = new JSONObject(websocketData.get("controls"));
+            return visionControls.getString("camera_mode");
+
+        }
+        catch(Exception e){
+            System.out.println("couldn't find controls");
+        }
+        return null;
+    }
 
     public void connect(){
         try{

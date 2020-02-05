@@ -46,9 +46,12 @@ public class RobotMap
   //Button ports
   private final int SHIFT_BUTTON = 1;
   private final int ALIGN_BUTTON = 3;
-  private final int BAY_BUTTON = 8;
-  private final int PORT_BUTTON = 10;
+  private final int BAY_BUTTON = 7;
+  private final int PORT_BUTTON = 11;
   private final int BALL_BUTTON = 9;
+
+  //Light ports
+  private final int LIGHT_PORT = 11;
 
   /*****
    * Constructor methods
@@ -119,15 +122,23 @@ public class RobotMap
     return this.ALIGN_BUTTON;
   }
 
-  public int getBallButton() {
+  public int getBallButton() 
+  {
     return this.BALL_BUTTON;
   }
 
-  public int getPortButton() {
+  public int getPortButton() 
+  {
     return this.PORT_BUTTON;
   } 
 
-  public int getBayButton() {
+  public int getBayButton() 
+  {
     return this.BAY_BUTTON;
+  }
+
+  public int getLightPort() 
+  {
+    return this.LIGHT_PORT;
   }
 }

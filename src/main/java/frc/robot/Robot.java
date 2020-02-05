@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.DashboardWS;
@@ -27,13 +29,16 @@ public class Robot extends TimedRobot
   public static final CommandLinker COMMAND_LINKER = new CommandLinker();
   public static final TrackingWS TRACKERWS = new TrackingWS();
   public static final DashboardWS DASHBOARDWS = new DashboardWS();
+  public WPI_TalonSRX light = new WPI_TalonSRX(ROBOTMAP.getLightPort());
 
   @Override
   public void robotInit() 
   {
-    COMMAND_LINKER.configureCommands();
+    //COMMAND_LINKER.configureCommands();
     TRACKERWS.connect();
     DASHBOARDWS.connect();
+    light.configContinuousCurrentLimit(1);
+    light.enableCurrentLimit(true);
 
    /* CommandScheduler.getInstance().registerSubsystem(Robot.DRIVETRAIN);
     CommandScheduler.getInstance().registerSubsystem(Robot.ULTRA);
@@ -52,6 +57,7 @@ public class Robot extends TimedRobot
   public void robotPeriodic() 
   {
     VISION.objectPresent(TRACKERWS.getTargetData());
+    //light.set(Math.abs(COMMAND_LINKER.DRIVE_JOYSTICK.getRawAxis(3)/0.5));
   }
 
   @Override
@@ -76,6 +82,7 @@ public class Robot extends TimedRobot
   public void teleopPeriodic() 
   {
     CommandScheduler.getInstance().run();
+    light.set(1.0);
   }
 
   @Override
